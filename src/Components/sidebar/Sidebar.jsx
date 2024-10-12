@@ -2,8 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { IoMdHome } from 'react-icons/io'
 import { IoMdArchive} from 'react-icons/io'
 import { IoMdTrash} from 'react-icons/io'
-import { MdLabelImportant } from 'react-icons/io'
-
+import { MdLabelImportant } from "react-icons/md";
 function Sidebar() {
   const styles = ' flex items-center gap-2 px-2 py-1 rounded-tr-full rounded-br-full '
   const getStyle = ({isActive})=>{
