@@ -1,85 +1,94 @@
-import {useReducer} from "react";
 import { Fragment } from "react";
 import Navbar from "../../Components/Navbar/Navbar";
 import Sidebar from "../../Components/sidebar/Sidebar";
 import { IoMdAdd } from "react-icons/io";
-import { notesReducer } from "../../reducers/notesReducers";
-import { LuPin } from "react-icons/lu";
-import { IoMdArchive } from "react-icons/io";
-import { MdDelete } from "react-icons/md";
+import { useNotes } from "../../context/notes-context";
+
+import NotesCard from "../../Components/NotesCard/Index";
 
 export const Home = () => {
 
-    const initialState = {
-        title:"",
-        text:"",
-        notes:[]
-    }
-    
-    const[{title,text,notes}, notesDispatch] = useReducer(notesReducer, initialState)
+    const { title, text, notes, notesDispatch } = useNotes();
 
-    const onTitleChange = (e)=>{
+    const onTitleChange = (e) => {
         notesDispatch({
-            type:"TITLE",
-            payload:e.target.value
-        })
-    }
-    const onTextChange = (e)=>{
-        notesDispatch({
-            type:"TEXT",
-            payload:e.target.value
-        })
-    }
+            type: "TITLE",
+            payload: e.target.value
+        });
+    };
 
-    const onAddClick = ()=>{
+    const onTextChange = (e) => {
         notesDispatch({
-            type:'ADD_NOTE'
-        })
+            type: "TEXT",
+            payload: e.target.value
+        });
+    };
+
+    const onAddClick = () => {
         notesDispatch({
-            type:"CLEAR_INPUT"
-        })
-    }
+            type: 'ADD_NOTE'
+        });
+        notesDispatch({
+            type: "CLEAR_INPUT"
+        });
+    };
+
+    // Corrected filtering logic
+    const pinnedNotes = notes?.filter(({ isPinned }) => isPinned);
+    const otherNotes = notes?.filter(({ isPinned }) => !isPinned);
 
     return (
-
         <Fragment>
             <Navbar />
             <main className="flex gap-3 ">
-                <Sidebar/>
+                <Sidebar />
                 <div>
                     <div className="flex flex-col w-[300px] relative mt-6 ">
-                        <input value={title} onChange={onTitleChange} className="border" type="text" placeholder="Enter tittle" />
-                        <textarea value={text} onChange={onTextChange} className="border" placeholder="Enter text"/>
-                        <button disabled={title.length == 0 } onClick={onAddClick} className=" absolute bottom-1 right-1 "  >
-                        <IoMdAdd className=" w-8 h-8"/>
+                        <input 
+                            value={title} 
+                            onChange={onTitleChange} 
+                            className="border border-neutral-200 rounded-t-md focus:outline-none border-b-0 p-1" 
+                            type="text" 
+                            placeholder="Enter title" 
+                        />
+                        <textarea 
+                            value={text} 
+                            onChange={onTextChange} 
+                            className="border border-neutral-200 rounded-b-md focus:outline-none border-t-0 p-1" 
+                            placeholder="Enter text" 
+                        />
+                        <button 
+                            disabled={title.length === 0} 
+                            onClick={onAddClick} 
+                            className="w-7 h-7 absolute bottom-0 right-0 border bg-indigo-900 text-slate-50 rounded-full cursor-pointer"  
+                        >
+                            <IoMdAdd className="w-7 h-7" />
                         </button>
-                        </div>
-                        <div className=" mt-14 flex flex-wrap gap-4 ">
-                            {
-                                notes?.length > 0 && notes.map(({id,title,text}) =>(
-                                    <div className=" w-56 border border-slate-300 p-2 rounded-sm  " key={id}>
-                                        <div className="flex justify-between">
-                                            <p>{title}</p>
-                                            <button><LuPin/></button>
-                                        </div>
-                                        <div className="flex flex-col  ">
-                                            <p>{text}</p>
-                                            <div  className=" ml-auto " >
-                                            <button className=" pr-2 " >
-                                            <IoMdArchive/>
-                                            </button>
-                                            <button className=" pr-0 " >
-                                            <MdDelete/>
-                                            </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                            }
-                        </div>
+                    </div>
+
+                    {pinnedNotes.length > 0 && (
+                        <>
+                            <h3 className="mt-14">Pinned Notes</h3>
+                            <div className="flex flex-wrap gap-4">
+                                {pinnedNotes.map(({ id, title, text, isPinned }) => (
+                                    <NotesCard key={id} id={id} title={title} text={text} isPinned={isPinned} />
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {otherNotes.length > 0 && (
+                        <>
+                            <h3 className="mt-14">Other Notes</h3>
+                            <div className="flex flex-wrap gap-4">
+                                {otherNotes.map(({ id, title, text, isPinned }) => (
+                                    <NotesCard key={id} id={id} title={title} text={text} isPinned={isPinned} />
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </main>
         </Fragment>
-
-    )
-}
+    );
+};
