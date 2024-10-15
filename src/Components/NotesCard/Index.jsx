@@ -21,15 +21,15 @@ function NotesCard({ id, title, text, isPinned }) {
     }
 
     return (
-        <div className=" w-56 border border-slate-300 p-2 rounded-sm  " key={id}>
+        <div className="border border-slate-300 p-2 rounded-sm  w-[250px] bg-neutral-700 text-zinc-100" key={id}>
             <div className="flex justify-between border-b-2 ">
-                <p>{title}</p>
+                <p className=" cursor-not-allowed " >{title}</p>
                 <button onClick={() => onPinClick(id)}>
                     <LuPin className={` ${isPinned ? ' fill-neutral-100 ' : 'text-zinc-200'} `} />
                 </button>
             </div>
             <div className="flex flex-col  ">
-                <p>{text}</p>
+                <p className=" overflow-auto" > {text}</p>
                 <div className=" ml-auto " >
                     <button className=" pr-2 " >
                         <IoMdArchive />
